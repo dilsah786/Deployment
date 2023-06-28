@@ -10,5 +10,7 @@
   "description": "deployment of db.json",
   "main": "server.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {},
+  "keywords": []
 }
