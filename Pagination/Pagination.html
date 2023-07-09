@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         #main_Container{
+                display: grid;
+                grid-template-columns: repeat(4,1fr);
+                margin-left: 10%;
+            }
+            #pagination{
+                display: flex;
+                justify-content: space-around;
+            }
+            #pagination button{
+                font-size: small;
+                height: 20px;
+                border-radius: 8px;
+            }
+            #pageno{
+                margin-top: -5px;
+            }
+        
+        .text{
+            font-size: large;
+           margin-left: 10px;
+        }
+        
+        @media (min-width: 150px) and (max-width: 600px) {
+            #main_Container{
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+                margin-left: 33px;
+            }
+            #pagination{
+                display: flex;
+                justify-content: space-around;
+            }
+            #pagination button{
+                font-size: small;
+                height: 20px;
+                border-radius: 8px;
+            }
+            #pageno{
+                margin-top: -5px;
+            }
+        }
+        .text{
+            font-size: small;
+           margin-left: 10px;
+        }
+      
+    </style>
+</head>
+<body>
+ 
+    <div id="main_Container"></div>
+    <div id="pagination">
+        <button id="prev"> << Previous</button>
+        <h3 id="pageno">1</h3>
+        <button id="next">Next >></button>
+    </div>
+</body>
+</html>
+<script>
+
+    let mainSection = document.getElementById("main_Container");
+
+    let prev = document.getElementById("prev");
+    let next = document.getElementById("next");
+    let pageno = document.getElementById("pageno");
+    
+    let CurrPage = 1;
+    let totalPage;
+
+
+    async function fetchData(){
+        if(CurrPage == 1){
+            prev.disabled = true;
+        }else{
+            prev.disabled = false;
+        }
+
+        if(CurrPage == totalPage){
+            next.disabled = true;
+        }else{
+            next.disabled = false;
+        }
+        try{
+            let result = await fetch(`https://reqres.in/api/users?page=${CurrPage}`);
+            let res = await result.json();
+            console.log(res);
+            displayData(res.data);
+            pageno.innerText = CurrPage;
+            totalPage = res.total_pages;
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    fetchData(CurrPage);
+    function displayData(data){
+        mainSection.innerHTML = "";
+    data.map((elem)=>{
+
+    let mainDiv = document.createElement("div");
+
+    let image = document.createElement("img");
+    image.src = elem.avatar;
+    image.id = "image";
+
+    let name = document.createElement("h2");
+    name.innerText = elem.first_name + " " + elem.last_name;
+    name.className= "text"
+
+    let email = document.createElement("p");
+    email.innerText = elem.email;
+    email.className = "text"
+
+    mainDiv.append(image,name,email);
+    mainSection.append(mainDiv)
+  })
+
+}
+
+prev.addEventListener("click",(()=>{
+    if(CurrPage === 1){
+        return
+    }else{
+        CurrPage--;
+    }
+    fetchData(CurrPage)
+}))
+
+next.addEventListener("click",(()=>{
+    if(CurrPage == totalPage){
+        return;
+    }else{
+        CurrPage++;
+    }
+    fetchData(CurrPage)
+}))
+
+
+
+
+
+
+
+</script>
